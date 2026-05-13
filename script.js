@@ -19,11 +19,14 @@ function adjustDestinationWidth(rowNumber) {
     }
 }
 
+let isAutoUpdateEnabled = true; // 自動更新の初期状態（ON）
+
 const typeData = {
     "local": { text: "普　通", className: "type-local" },
     "semirapid": { text: "区間快速", className: "type-semirapid" },
     "rapid": { text: "快　速", className: "type-rapid" },
-    "newrapid": { text: "新快速", className: "type-newrapid" }
+    "newrapid": { text: "新快速", className: "type-newrapid" },
+    "specialrapid": { text: "特別快速", className: "type-specialrapid"}
 };
 
 function setupSync(rowNumber) {
@@ -69,48 +72,82 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // 時刻表データからリアルタイムに表示する情報を更新する
 // スプレッドシートの公開CSV URL
-const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSUtXNKeKAMDN6dXxti5lbUcL8RHC1Hv5cICtJjHdwA7iS4pF44y1hWvWYK1udPhlXrZcySZGIk8dFU/pub?gid=0&single=true&output=csv";
+const CSV_BASE_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSUtXNKeKAMDN6dXxti5lbUcL8RHC1Hv5cICtJjHdwA7iS4pF44y1hWvWYK1udPhlXrZcySZGIk8dFU/pub?gid=0&single=true&output=csv&single=true&gid=";
+
+// シートID
+const sheetIds = {
+    "chuo_weekday": "0",          // 平日シートのgid
+    "chuo_holiday": "393799729",  // 休日シートのgid
+};
+
+// ③ 読み込み失敗時に使用する初期値（画像通りの表示設定）
+const defaultTimetable = [
+    { departure: "01:30", type: "local", dest: "塩尻", cars: "8両", pos: "○1～8" },
+    { departure: "02:30", type: "specialrapid", dest: "中津川", cars: "8両", pos: "○1～8" }
+    // 必要に応じて3段目以降のダミーデータも追加可能
+];
 
 // グローバル変数として時刻表を保持
 let timetable = [];
 
-// CSVをフェッチしてパースする関数
-async function loadTimetableFromSheet() {
+// 指定したキー（例："chuo_weekday"）のシートを読み込む関数
+async function loadTimetable(sheetKey) {
+    const gid = sheetIds[sheetKey];
+    if (!gid) {
+        console.error("指定されたシートが存在しません:", sheetKey);
+        applyFallback();
+        return;
+    }
+
+    const url = CSV_BASE_URL + gid;
+
     try {
-        const response = await fetch(SHEET_CSV_URL);
-        const csvText = await response.text();
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`HTTPエラー: ${response.status}`);
+        }
         
-        // 改行で分割して行ごとの配列にする
+        const csvText = await response.text();
         const rows = csvText.trim().split('\n');
         
-        // 1行目（ヘッダー）をスキップしてデータ部分を処理
-        timetable = rows.slice(1).map(row => {
-            // カンマで分割
-            const cols = row.split(',');
-            return {
-                departure: cols[0],
-                type: cols[1],
-                dest: cols[2],
-                cars: cols[3],
-                pos: cols[4]
-            };
-        });
+        // ヘッダーを除き、空行を無視してパース
+        timetable = rows.slice(1)
+            .filter(row => row.trim() !== '') // 空行を除外
+            .map(row => {
+                const cols = row.split(',');
+                return {
+                    departure: cols[0],
+                    type: cols[1],
+                    dest: cols[2],
+                    cars: cols[3],
+                    pos: cols[4]
+                };
+            });
 
-        console.log("時刻表データの読み込み完了:", timetable);
-        
-        // 読み込み完了後に初回の表示更新を走らせる
+        console.log(`[${sheetKey}] データの読み込みに成功しました`);
         updateDisplayFromTimetable();
 
     } catch (error) {
-        console.error("時刻表の読み込みに失敗しました", error);
+        console.warn("データの読み込みに失敗しました。初期値を適用します。", error);
+        applyFallback();
     }
 }
 
-// ページ読み込み時に実行
-document.addEventListener('DOMContentLoaded', () => {
-    loadTimetableFromSheet(); // データ取得を開始
+// 失敗時に初期値をセットする関数
+function applyFallback() {
+    timetable = [...defaultTimetable];
     
-    // 定期更新（10秒ごとなど）
+    // 【重要】現在時刻に関わらず初期値を強制的に表示させたい場合は、
+    // ここで updateDisplayFromTimetable() を使わず、直接DOMを書き換える処理を呼び出します。
+    // 今回は初期値を「現在の時刻表」として扱い、通常通りの更新関数に流し込みます。
+    updateDisplayFromTimetable();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    // 起動時は平日のデータを読み込む（テスト用に休日を指定してもOK）
+    loadTimetable("chuo_weekday"); 
+    
+    // 定期更新（10秒ごと）
     setInterval(updateDisplayFromTimetable, 10000);
 });
 
@@ -124,6 +161,11 @@ function timeToMinutes(timeStr) {
 
 // 時刻表から「これからの列車」を探して表示を更新するメイン関数
 function updateDisplayFromTimetable() {
+    // 自動更新がOFFの場合は、ここで処理を抜ける
+    if (!isAutoUpdateEnabled) {
+        return;
+    }
+
     const now = new Date();
     // 現在時刻を分数に変換
     const currentMinutes = now.getHours() * 60 + now.getMinutes();
@@ -153,6 +195,15 @@ function updateDisplayFromTimetable() {
 
             // 長い駅名に対応するための関数を呼び出し
             adjustDestinationWidth(i);
+
+            // 入力フォームの内容を更新
+            document.getElementById(`input-time-${i}`).value = train.departure;
+            document.getElementById(`input-dest-${i}`).value = train.dest;
+            document.getElementById(`input-cars-${i}`).value = train.cars;
+            document.getElementById(`input-pos-${i}`).value = train.pos;
+            
+            // select要素の選択状態も更新
+            document.getElementById(`input-type-${i}`).value = train.type;
         } else {
             // 本日の最終電車が終わった場合などの処理（表示を消す）
             document.getElementById(`disp-time-${i}`).textContent = "";
@@ -162,13 +213,31 @@ function updateDisplayFromTimetable() {
             const typeDisp = document.getElementById(`disp-type-${i}`);
             typeDisp.textContent = "";
             typeDisp.className = 'type-box'; 
+
+            // 入力フォームをクリア
+            document.getElementById(`input-time-${i}`).value = "";
+            document.getElementById(`input-dest-${i}`).value = "";
+            document.getElementById(`input-cars-${i}`).value = "";
+            document.getElementById(`input-pos-${i}`).value = "";
+            document.getElementById(`input-type-${i}`).value = "local"; // デフォルト値など
         }
     }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    // ページ読み込み時に1回目の中身を更新
-    updateDisplayFromTimetable();
+    // トグルスイッチのイベントリスナー設定
+    const toggleCheckbox = document.getElementById('auto-update-toggle');
+
+    toggleCheckbox.addEventListener('change', (e) => {
+        isAutoUpdateEnabled = e.target.checked;
+        
+        // OFF -> ON に切り替えた瞬間は、即座に時刻表データで上書きする
+        if (isAutoUpdateEnabled) {
+            updateDisplayFromTimetable();
+        }
+    });
+
+    loadTimetable("chuo_weekday"); // データ取得開始
 
     // 10秒(10000ミリ秒)ごとに updateDisplayFromTimetable を実行し続ける
     setInterval(updateDisplayFromTimetable, 10000);
@@ -178,4 +247,9 @@ document.addEventListener('DOMContentLoaded', () => {
         adjustDestinationWidth(1);
         adjustDestinationWidth(2);
     });
+});
+
+document.getElementById('schedule-selector').addEventListener('change', (e) => {
+    const selectedKey = e.target.value;
+    loadTimetable(selectedKey);
 });
