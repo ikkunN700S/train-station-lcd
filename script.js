@@ -72,12 +72,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // 時刻表データからリアルタイムに表示する情報を更新する
 // スプレッドシートの公開CSV URL
-const CSV_BASE_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSUtXNKeKAMDN6dXxti5lbUcL8RHC1Hv5cICtJjHdwA7iS4pF44y1hWvWYK1udPhlXrZcySZGIk8dFU/pub?gid=0&single=true&output=csv&single=true&gid=";
+const CSV_BASE_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSUtXNKeKAMDN6dXxti5lbUcL8RHC1Hv5cICtJjHdwA7iS4pF44y1hWvWYK1udPhlXrZcySZGIk8dFU/pub?output=csv&single=true&gid=";
 
 // シートID
 const sheetIds = {
-    "chuo_weekday": "0",          // 平日シートのgid
-    "chuo_holiday": "393799729",  // 休日シートのgid
+    "chuo_nagoya_weekday_d": "0",          // 中央西線名古屋平日下りシートのgid
+    "chuo_nagoya_holiday_d": "393799729",  // 中央西線名古屋休日下りシートのgid
+    "chuo_tsurumai_weekday_d": "2108810631", // 中央西線鶴舞平日下りシートのgid
+    "chuo_tsurumai_holiday_d": "1025263841", // 中央西線鶴舞休日下りシートのgid
+    "chuo_tsurumai_weekday_u": "672148058", // 中央西線鶴舞平日上りシートのgid
+    "chuo_tsurumai_holiday_u": "1531316906",  // 中央西線鶴舞休日上りシートのgid
+    "subway_tsurumai_weekday_t": "1138879033", // 地下鉄鶴舞平日豊田市方面
+    "subway_tsurumai_holiday_t": "667488261", // 地下鉄鶴舞休日豊田市方面
+    "subway_shiogama_weekday_k": "371307575", // 地下鉄塩釜口平日上小田井方面
+    "subway_shiogama_holiday_k": "1015188927"  // 地下鉄塩釜口休日上小田井方面
 };
 
 // ③ 読み込み失敗時に使用する初期値（画像通りの表示設定）
@@ -137,15 +145,12 @@ async function loadTimetable(sheetKey) {
 function applyFallback() {
     timetable = [...defaultTimetable];
     
-    // 【重要】現在時刻に関わらず初期値を強制的に表示させたい場合は、
-    // ここで updateDisplayFromTimetable() を使わず、直接DOMを書き換える処理を呼び出します。
-    // 今回は初期値を「現在の時刻表」として扱い、通常通りの更新関数に流し込みます。
     updateDisplayFromTimetable();
 }
 
 document.addEventListener('DOMContentLoaded', () => {
     // 起動時は平日のデータを読み込む（テスト用に休日を指定してもOK）
-    loadTimetable("chuo_weekday"); 
+    loadTimetable("chuo_tsurumai_weekday_u"); 
     
     // 定期更新（10秒ごと）
     setInterval(updateDisplayFromTimetable, 10000);
@@ -154,8 +159,14 @@ document.addEventListener('DOMContentLoaded', () => {
 // 時間の文字列 (例: "15:30") を、0時からの合計分数 (例: 930) に変換する関数
 function timeToMinutes(timeStr) {
     const parts = timeStr.split(':');
-    const hours = parseInt(parts[0], 10);
+    let hours = parseInt(parts[0], 10);
     const minutes = parseInt(parts[1], 10);
+
+    // 0時〜3時台は「翌日」として扱い、+24時間（24時〜27時）にする
+    if (hours >= 0 && hours <= 3) {
+        hours += 24;
+    }
+
     return hours * 60 + minutes;
 }
 
@@ -167,8 +178,16 @@ function updateDisplayFromTimetable() {
     }
 
     const now = new Date();
-    // 現在時刻を分数に変換
-    const currentMinutes = now.getHours() * 60 + now.getMinutes();
+    // 現在時刻
+    let currentHours = now.getHours();
+    const currentMins = now.getMinutes();
+
+    // 現在時刻も、0時〜3時の間は「24時〜27時」として扱う
+    if (currentHours >= 0 && currentHours <= 3) {
+        currentHours += 24;
+    }
+
+    const currentMinutes = currentHours * 60 + currentMins;
 
     // 時刻表配列から、現在時刻「以降」に発車する列車だけを抽出（フィルタリング）
     const upcomingTrains = timetable.filter(train => {
@@ -236,8 +255,6 @@ document.addEventListener('DOMContentLoaded', () => {
             updateDisplayFromTimetable();
         }
     });
-
-    loadTimetable("chuo_weekday"); // データ取得開始
 
     // 10秒(10000ミリ秒)ごとに updateDisplayFromTimetable を実行し続ける
     setInterval(updateDisplayFromTimetable, 10000);
