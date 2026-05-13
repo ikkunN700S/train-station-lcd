@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>発車標シミュレータ</title>
+    <title>JR東海風 発車標シミュレータ (長体対応版)</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <!-- シミュレーション表示部 -->
         <div class="display-board">
             <div class="board-header">
                 <span class="col-type">種別</span>
@@ -18,28 +17,30 @@
                 <span class="col-pos">乗車位置</span>
             </div>
             
-            <!-- 1段目 -->
             <div class="board-row">
                 <span class="col-type"><div id="disp-type-1" class="type-box type-local">普　通</div></span>
                 <span class="col-time" id="disp-time-1">10:26</span>
-                <span class="col-dest" id="disp-dest-1">高　蔵　寺</span>
+                <span class="col-dest">
+                    <span id="disp-dest-1" class="dest-text">高　蔵　寺</span>
+                </span>
                 <span class="col-cars" id="disp-cars-1">8両</span>
                 <span class="col-pos" id="disp-pos-1">○1～8</span>
             </div>
 
-            <!-- 2段目 -->
             <div class="board-row">
                 <span class="col-type"><div id="disp-type-2" class="type-box type-semirapid">区間快速</div></span>
                 <span class="col-time" id="disp-time-2">10:42</span>
-                <span class="col-dest" id="disp-dest-2">中　津　川</span>
+                <span class="col-dest">
+                    <span id="disp-dest-2" class="dest-text">中　津　川</span>
+                </span>
                 <span class="col-cars" id="disp-cars-2">8両</span>
                 <span class="col-pos" id="disp-pos-2">○1～8</span>
             </div>
         </div>
 
-        <!-- 入力フォーム部 -->
         <div class="controls">
             <h3>表示設定</h3>
+            <p><small>※長い駅名を入力すると自動で横幅が縮小されます</small></p>
             
             <div class="control-row">
                 <h4>1段目</h4>
@@ -49,7 +50,6 @@
                         <option value="semirapid">区間快速</option>
                         <option value="rapid">快速</option>
                         <option value="newrapid">新快速</option>
-                        <option value="specialrapid">特別快速</option>
                     </select>
                 </label>
                 <label>時刻: <input type="text" id="input-time-1" value="10:26"></label>
@@ -66,7 +66,6 @@
                         <option value="semirapid" selected>区間快速</option>
                         <option value="rapid">快速</option>
                         <option value="newrapid">新快速</option>
-                        <option value="specialrapid">特別快速</option>
                     </select>
                 </label>
                 <label>時刻: <input type="text" id="input-time-2" value="10:42"></label>
@@ -76,6 +75,13 @@
             </div>
         </div>
     </div>
+
+    <footer>
+        <p>&copy; 2026 ikkunN700S</p>
+        <p id="site-version"></p>
+    </footer>
+
     <script src="script.js"></script>
+    <script src="version.js"></script>
 </body>
 </html>
