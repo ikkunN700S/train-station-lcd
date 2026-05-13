@@ -70,10 +70,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // 時刻表データからリアルタイムに表示する情報を更新する
 // スプレッドシートの公開CSV URL
-const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSUtXNKeKAMDN6dXxti5lbUcL8RHC1Hv5cICtJjHdwA7iS4pF44y1hWvWYK1udPhlXrZcySZGIk8dFU/pub?gid=0&single=true&output=csv&single=true&gid=";
+const CSV_BASE_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSUtXNKeKAMDN6dXxti5lbUcL8RHC1Hv5cICtJjHdwA7iS4pF44y1hWvWYK1udPhlXrZcySZGIk8dFU/pub?gid=0&single=true&output=csv&single=true&gid=";
 
 // シートID
-const sheetIDs = {
+const sheetIds = {
     "chuo_weekday": "0",          // 平日シートのgid
     "chuo_holiday": "393799729",  // 休日シートのgid
 };
