@@ -110,25 +110,25 @@ body {
 
 /* 区間快速: 緑 */
 .type-semirapid {
-    background-color: #00b050;
+    background-color: #00cc44;
     color: #fff;
 }
 
 /* 快速: 青 */
 .type-rapid {
-    background-color: #0070c0;
+    background-color: #0052cc;
     color: #fff;
 }
 
 /* 新快速: オレンジ */
 .type-newrapid {
-    background-color: #ff9900;
+    background-color: #ff4400;
     color: #fff;
 }
 
 /* 特別快速: 黄色 */
 .type-specialrapid {
-    background-color: #ffcc00;
+    background-color: #ffff00ff;
     color: #000;
     text-shadow: none;
 }

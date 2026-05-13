@@ -19,6 +19,8 @@ function adjustDestinationWidth(rowNumber) {
     }
 }
 
+let isAutoUpdateEnabled = true; // 自動更新の初期状態（ON）
+
 const typeData = {
     "local": { text: "普　通", className: "type-local" },
     "semirapid": { text: "区間快速", className: "type-semirapid" },
@@ -159,6 +161,11 @@ function timeToMinutes(timeStr) {
 
 // 時刻表から「これからの列車」を探して表示を更新するメイン関数
 function updateDisplayFromTimetable() {
+    // 自動更新がOFFの場合は、ここで処理を抜ける
+    if (!isAutoUpdateEnabled) {
+        return;
+    }
+
     const now = new Date();
     // 現在時刻を分数に変換
     const currentMinutes = now.getHours() * 60 + now.getMinutes();
@@ -188,6 +195,15 @@ function updateDisplayFromTimetable() {
 
             // 長い駅名に対応するための関数を呼び出し
             adjustDestinationWidth(i);
+
+            // 入力フォームの内容を更新
+            document.getElementById(`input-time-${i}`).value = train.departure;
+            document.getElementById(`input-dest-${i}`).value = train.dest;
+            document.getElementById(`input-cars-${i}`).value = train.cars;
+            document.getElementById(`input-pos-${i}`).value = train.pos;
+            
+            // select要素の選択状態も更新
+            document.getElementById(`input-type-${i}`).value = train.type;
         } else {
             // 本日の最終電車が終わった場合などの処理（表示を消す）
             document.getElementById(`disp-time-${i}`).textContent = "";
@@ -197,13 +213,31 @@ function updateDisplayFromTimetable() {
             const typeDisp = document.getElementById(`disp-type-${i}`);
             typeDisp.textContent = "";
             typeDisp.className = 'type-box'; 
+
+            // 入力フォームをクリア
+            document.getElementById(`input-time-${i}`).value = "";
+            document.getElementById(`input-dest-${i}`).value = "";
+            document.getElementById(`input-cars-${i}`).value = "";
+            document.getElementById(`input-pos-${i}`).value = "";
+            document.getElementById(`input-type-${i}`).value = "local"; // デフォルト値など
         }
     }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    // ページ読み込み時に1回目の中身を更新
-    updateDisplayFromTimetable();
+    // トグルスイッチのイベントリスナー設定
+    const toggleCheckbox = document.getElementById('auto-update-toggle');
+
+    toggleCheckbox.addEventListener('change', (e) => {
+        isAutoUpdateEnabled = e.target.checked;
+        
+        // OFF -> ON に切り替えた瞬間は、即座に時刻表データで上書きする
+        if (isAutoUpdateEnabled) {
+            updateDisplayFromTimetable();
+        }
+    });
+
+    loadTimetable("chuo_weekday"); // データ取得開始
 
     // 10秒(10000ミリ秒)ごとに updateDisplayFromTimetable を実行し続ける
     setInterval(updateDisplayFromTimetable, 10000);
