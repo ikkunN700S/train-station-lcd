@@ -2,8 +2,8 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JR東海風 発車標シミュレータ (長体対応版)</title>
+    <meta name="viewport" content="width=900">
+    <title>駅ホーム発車標シミュレータ</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -18,7 +18,7 @@
             </div>
             
             <div class="board-row">
-                <span class="col-type"><div id="disp-type-1" class="type-box type-local"></div></span>
+                <span class="col-type"><div id="disp-type-1" class="type-box"></div></span>
                 <span class="col-time" id="disp-time-1"></span>
                 <span class="col-dest">
                     <span id="disp-dest-1" class="dest-text"></span>
@@ -28,7 +28,7 @@
             </div>
 
             <div class="board-row">
-                <span class="col-type"><div id="disp-type-2" class="type-box type-semirapid"></div></span>
+                <span class="col-type"><div id="disp-type-2" class="type-box"></div></span>
                 <span class="col-time" id="disp-time-2"></span>
                 <span class="col-dest">
                     <span id="disp-dest-2" class="dest-text"></span>
@@ -40,6 +40,7 @@
 
         <div class="controls">
             <h3>表示設定</h3>
+            <p><small>初期データ読込まで数秒かかります。</small></p>
             
             <div class="control-row">
                 <h4>ダイヤ選択</h4>
