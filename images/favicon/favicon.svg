@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+  <!-- 発車標の黒い外枠を模した角丸背景（四隅は透過） -->
+  <rect x="8" y="8" width="240" height="240" rx="56" fill="#1a1a1a" />
+  <rect x="8" y="8" width="240" height="240" rx="56" fill="none" stroke="#333333" stroke-width="6"/>
+  
+  <!-- 列車（JR東海カラーの白系ボディ） -->
+  <path d="M 64,70 C 64,50 192,50 192,70 L 204,180 C 204,196 192,208 176,208 L 80,208 C 64,208 52,196 52,180 Z" fill="#e8e8e8"/>
+  
+  <!-- 運転席の黒い窓 -->
+  <rect x="64" y="80" width="128" height="56" rx="8" fill="#1a1a1a"/>
+  
+  <!-- 種別・行先表示器（区間快速をイメージした緑LED） -->
+  <rect x="100" y="56" width="56" height="12" rx="2" fill="#00b050"/>
+  
+  <!-- JR東海カラーのオレンジ帯 -->
+  <path d="M 54,160 L 202,160 L 202,176 L 54,176 Z" fill="#ff7e00"/>
+  
+  <!-- 前照灯（白） -->
+  <circle cx="76" cy="188" r="10" fill="#ffffff"/>
+  <circle cx="180" cy="188" r="10" fill="#ffffff"/>
+  
+  <!-- 尾灯（赤） -->
+  <circle cx="96" cy="188" r="4" fill="#ff3333"/>
+  <circle cx="160" cy="188" r="4" fill="#ff3333"/>
+</svg>
