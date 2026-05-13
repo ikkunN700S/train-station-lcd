@@ -40,13 +40,34 @@ body {
     font-size: 1.8rem;
     font-weight: bold;
     margin-bottom: 5px;
+    padding: 8px 0;
+    height: 60px; /* 高さを固定 */
 }
 
-/* カラム幅の設定 */
-.col-type { width: 25%; text-align: center; }
-.col-time { width: 15%; text-align: center; font-family: monospace; font-size: 1.1em;}
-.col-dest { width: 30%; text-align: left; padding-left: 20px; box-sizing: border-box; }
-.col-cars { width: 10%; text-align: center; }
+/* 行先カラムの設定 */
+.col-dest {
+    width: 30%;
+    text-align: left;
+    padding: 0 10px;
+    box-sizing: border-box;
+    overflow: hidden; /* はみ出しを隠す */
+    white-space: nowrap; /* 改行禁止 */
+    display: flex;
+    align-items: center;
+}
+
+/* 駅名テキスト自体 */
+.dest-text {
+    display: inline-block;
+    white-space: nowrap;
+    transform-origin: left center; /* 左端を基準に縮小 */
+    transition: transform 0.1s ease-out; /* 変化を少し滑らかに */
+}
+
+/* その他のカラム幅（微調整） */
+.col-type { width: 22%; text-align: center; }
+.col-time { width: 16%; text-align: center; font-family: monospace; }
+.col-cars { width: 12%; text-align: center; }
 .col-pos  { width: 20%; text-align: center; }
 
 /* 種別ボックスのスタイル */
