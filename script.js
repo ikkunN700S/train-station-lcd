@@ -72,12 +72,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // 時刻表データからリアルタイムに表示する情報を更新する
 // スプレッドシートの公開CSV URL
-const CSV_BASE_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSUtXNKeKAMDN6dXxti5lbUcL8RHC1Hv5cICtJjHdwA7iS4pF44y1hWvWYK1udPhlXrZcySZGIk8dFU/pub?gid=0&single=true&output=csv&single=true&gid=";
+const CSV_BASE_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSUtXNKeKAMDN6dXxti5lbUcL8RHC1Hv5cICtJjHdwA7iS4pF44y1hWvWYK1udPhlXrZcySZGIk8dFU/pub?output=csv&single=true&gid=";
 
 // シートID
 const sheetIds = {
-    "chuo_weekday": "0",          // 平日シートのgid
-    "chuo_holiday": "393799729",  // 休日シートのgid
+    "chuo_nagoya_weekday_d": "0",          // 中央西線名古屋平日下りシートのgid
+    "chuo_nagoya_holiday_d": "393799729",  // 中央西線名古屋休日下りシートのgid
+    "chuo_tsurumai_weekday_d": "2108810631", // 中央西線鶴舞平日下りシートのgid
+    "chuo_tsurumai_holiday_d": "1025263841", // 中央西線鶴舞休日下りシートのgid
+    "chuo_tsurumai_weekday_u": "672148058", // 中央西線鶴舞平日上りシートのgid
+    "chuo_tsurumai_holiday_u": "1531316906"  // 中央西線鶴舞休日上りシートのgid
 };
 
 // ③ 読み込み失敗時に使用する初期値（画像通りの表示設定）
@@ -145,7 +149,7 @@ function applyFallback() {
 
 document.addEventListener('DOMContentLoaded', () => {
     // 起動時は平日のデータを読み込む（テスト用に休日を指定してもOK）
-    loadTimetable("chuo_weekday"); 
+    loadTimetable("chuo_tsurumai_weekday_u"); 
     
     // 定期更新（10秒ごと）
     setInterval(updateDisplayFromTimetable, 10000);
@@ -236,8 +240,6 @@ document.addEventListener('DOMContentLoaded', () => {
             updateDisplayFromTimetable();
         }
     });
-
-    loadTimetable("chuo_weekday"); // データ取得開始
 
     // 10秒(10000ミリ秒)ごとに updateDisplayFromTimetable を実行し続ける
     setInterval(updateDisplayFromTimetable, 10000);
