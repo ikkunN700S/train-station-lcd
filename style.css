@@ -172,6 +172,10 @@ select {
     width: 100px;
 }
 
+#schedule-selector {
+    width: 200px;
+}
+
 input[id^="input-dest"] {
     width: 150px;
 }
