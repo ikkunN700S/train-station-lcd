@@ -104,7 +104,10 @@ const defaultTimetable = [
 // グローバル変数として時刻表を保持
 let timetable = [];
 
-// 指定したキー（例："chuo_weekday"）のシートを読み込む関数
+// キャッシュの有効期限（ミリ秒）: 1時間 = 3600000ms
+const CACHE_LIFETIME = 60 * 60 * 1000; 
+
+// --- データ取得部分（キャッシュ機能付き） ---
 async function loadTimetable(sheetKey) {
     const gid = sheetIds[sheetKey];
     if (!gid) {
@@ -113,9 +116,33 @@ async function loadTimetable(sheetKey) {
         return;
     }
 
+    // 1. キャッシュの確認
+    const cacheKey = `timetable_${sheetKey}`;       // データ保存用のキー
+    const timeKey = `timetable_${sheetKey}_time`; // 取得時刻保存用のキー
+
+    const cachedData = localStorage.getItem(cacheKey);
+    const cachedTime = localStorage.getItem(timeKey);
+
+    // キャッシュが存在し、かつ有効期限内であればそれを使う
+    if (cachedData && cachedTime) {
+        const now = new Date().getTime();
+        const timeDiff = now - parseInt(cachedTime, 10);
+
+        if (timeDiff < CACHE_LIFETIME) {
+            console.log(`[${sheetKey}] キャッシュからデータを読み込みました`);
+            timetable = JSON.parse(cachedData); // JSON文字列を配列に戻す
+            updateDisplayFromTimetable(true);
+            return; // ここで処理を終了し、フェッチは行わない
+        } else {
+            console.log(`[${sheetKey}] キャッシュの有効期限が切れました。再取得します。`);
+        }
+    }
+
+    // 2. キャッシュがない、または期限切れの場合はCSVをフェッチする
     const url = CSV_BASE_URL + gid;
 
     try {
+        console.log(`[${sheetKey}] ネットワークからCSVを取得中...`);
         const response = await fetch(url);
         if (!response.ok) {
             throw new Error(`HTTPエラー: ${response.status}`);
@@ -126,7 +153,7 @@ async function loadTimetable(sheetKey) {
         
         // ヘッダーを除き、空行を無視してパース
         timetable = rows.slice(1)
-            .filter(row => row.trim() !== '') // 空行を除外
+            .filter(row => row.trim() !== '') 
             .map(row => {
                 const cols = row.split(',');
                 return {
@@ -138,12 +165,25 @@ async function loadTimetable(sheetKey) {
                 };
             });
 
-        console.log(`[${sheetKey}] データの読み込みに成功しました`);
-        updateDisplayFromTimetable();
+        // 3. 取得したデータをキャッシュとして保存
+        localStorage.setItem(cacheKey, JSON.stringify(timetable)); // 配列を文字列化して保存
+        localStorage.setItem(timeKey, new Date().getTime().toString()); // 現在のミリ秒を保存
+
+        console.log(`[${sheetKey}] 新しいデータを取得し、キャッシュを更新しました`);
+        updateDisplayFromTimetable(true);
 
     } catch (error) {
-        console.warn("データの読み込みに失敗しました。初期値を適用します。", error);
-        applyFallback();
+        console.warn(`[${sheetKey}] データの取得に失敗しました。`, error);
+        
+        // エラー時、もし古いキャッシュが残っていれば期限切れでも「暫定的に」それを使う（オフライン対策）
+        if (cachedData) {
+            console.log("オフライン/エラーのため、期限切れのキャッシュを暫定使用します。");
+            timetable = JSON.parse(cachedData);
+            updateDisplayFromTimetable(true);
+        } else {
+            // キャッシュすら無ければ初期値を適用
+            applyFallback();
+        }
     }
 }
 
