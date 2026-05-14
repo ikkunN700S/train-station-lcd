@@ -76,14 +76,25 @@ const CSV_BASE_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSUtXNKeKA
 
 // シートID
 const sheetIds = {
+    "tokaido_kanayama_weekday_d": "1048215601", // 東海道線金山平日下りシートのgid
+    "tokaido_kanayama_holiday_d": "1496874316", // 東海道線金山休日下りシートのgid
+    "tokaido_kanayama_weekday_u": "", // 東海道線金山平日上りシートのgid
+    "tokaido_kanayama_holiday_u": "", // 東海道線金山休日上りシートのgid
+
     "chuo_nagoya_weekday_d": "0",          // 中央西線名古屋平日下りシートのgid
     "chuo_nagoya_holiday_d": "393799729",  // 中央西線名古屋休日下りシートのgid
+
+    "chuo_kanayama_weekday_d": "1094285652", // 中央西線金山平日下りシートのgid
+    "chuo_kanayama_holiday_d": "946553047", // 中央西線金山休日下りシートのgid
+
     "chuo_tsurumai_weekday_d": "2108810631", // 中央西線鶴舞平日下りシートのgid
     "chuo_tsurumai_holiday_d": "1025263841", // 中央西線鶴舞休日下りシートのgid
     "chuo_tsurumai_weekday_u": "672148058", // 中央西線鶴舞平日上りシートのgid
     "chuo_tsurumai_holiday_u": "1531316906",  // 中央西線鶴舞休日上りシートのgid
+
     "subway_tsurumai_weekday_t": "1138879033", // 地下鉄鶴舞平日豊田市方面
     "subway_tsurumai_holiday_t": "667488261", // 地下鉄鶴舞休日豊田市方面
+
     "subway_shiogama_weekday_k": "371307575", // 地下鉄塩釜口平日上小田井方面
     "subway_shiogama_holiday_k": "1015188927"  // 地下鉄塩釜口休日上小田井方面
 };
@@ -98,7 +109,10 @@ const defaultTimetable = [
 // グローバル変数として時刻表を保持
 let timetable = [];
 
-// 指定したキー（例："chuo_weekday"）のシートを読み込む関数
+// キャッシュの有効期限（ミリ秒）: 1時間 = 3600000ms
+const CACHE_LIFETIME = 60 * 60 * 1000; 
+
+// --- データ取得部分（キャッシュ機能付き） ---
 async function loadTimetable(sheetKey) {
     const gid = sheetIds[sheetKey];
     if (!gid) {
@@ -107,9 +121,33 @@ async function loadTimetable(sheetKey) {
         return;
     }
 
+    // 1. キャッシュの確認
+    const cacheKey = `timetable_${sheetKey}`;       // データ保存用のキー
+    const timeKey = `timetable_${sheetKey}_time`; // 取得時刻保存用のキー
+
+    const cachedData = localStorage.getItem(cacheKey);
+    const cachedTime = localStorage.getItem(timeKey);
+
+    // キャッシュが存在し、かつ有効期限内であればそれを使う
+    if (cachedData && cachedTime) {
+        const now = new Date().getTime();
+        const timeDiff = now - parseInt(cachedTime, 10);
+
+        if (timeDiff < CACHE_LIFETIME) {
+            console.log(`[${sheetKey}] キャッシュからデータを読み込みました`);
+            timetable = JSON.parse(cachedData); // JSON文字列を配列に戻す
+            updateDisplayFromTimetable(true);
+            return; // ここで処理を終了し、フェッチは行わない
+        } else {
+            console.log(`[${sheetKey}] キャッシュの有効期限が切れました。再取得します。`);
+        }
+    }
+
+    // 2. キャッシュがない、または期限切れの場合はCSVをフェッチする
     const url = CSV_BASE_URL + gid;
 
     try {
+        console.log(`[${sheetKey}] ネットワークからCSVを取得中...`);
         const response = await fetch(url);
         if (!response.ok) {
             throw new Error(`HTTPエラー: ${response.status}`);
@@ -120,7 +158,7 @@ async function loadTimetable(sheetKey) {
         
         // ヘッダーを除き、空行を無視してパース
         timetable = rows.slice(1)
-            .filter(row => row.trim() !== '') // 空行を除外
+            .filter(row => row.trim() !== '') 
             .map(row => {
                 const cols = row.split(',');
                 return {
@@ -132,12 +170,25 @@ async function loadTimetable(sheetKey) {
                 };
             });
 
-        console.log(`[${sheetKey}] データの読み込みに成功しました`);
-        updateDisplayFromTimetable();
+        // 3. 取得したデータをキャッシュとして保存
+        localStorage.setItem(cacheKey, JSON.stringify(timetable)); // 配列を文字列化して保存
+        localStorage.setItem(timeKey, new Date().getTime().toString()); // 現在のミリ秒を保存
+
+        console.log(`[${sheetKey}] 新しいデータを取得し、キャッシュを更新しました`);
+        updateDisplayFromTimetable(true);
 
     } catch (error) {
-        console.warn("データの読み込みに失敗しました。初期値を適用します。", error);
-        applyFallback();
+        console.warn(`[${sheetKey}] データの取得に失敗しました。`, error);
+        
+        // エラー時、もし古いキャッシュが残っていれば期限切れでも「暫定的に」それを使う（オフライン対策）
+        if (cachedData) {
+            console.log("オフライン/エラーのため、期限切れのキャッシュを暫定使用します。");
+            timetable = JSON.parse(cachedData);
+            updateDisplayFromTimetable(true);
+        } else {
+            // キャッシュすら無ければ初期値を適用
+            applyFallback();
+        }
     }
 }
 
@@ -149,8 +200,8 @@ function applyFallback() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 起動時は平日のデータを読み込む（テスト用に休日を指定してもOK）
-    loadTimetable("chuo_tsurumai_weekday_u"); 
+    // 起動時データを読み込む
+    loadTimetable("chuo_tsurumai_weekday_u"); // 起動時デフォルト
     
     // 定期更新（10秒ごと）
     setInterval(updateDisplayFromTimetable, 10000);
