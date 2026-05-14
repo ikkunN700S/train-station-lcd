@@ -78,8 +78,8 @@ const CSV_BASE_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSUtXNKeKA
 const sheetIds = {
     "tokaido_kanayama_weekday_d": "1048215601", // 東海道線金山平日下りシートのgid
     "tokaido_kanayama_holiday_d": "1496874316", // 東海道線金山休日下りシートのgid
-    "tokaido_kanayama_weekday_u": "", // 東海道線金山平日上りシートのgid
-    "tokaido_kanayama_holiday_u": "", // 東海道線金山休日上りシートのgid
+    "tokaido_kanayama_weekday_u": "430141393", // 東海道線金山平日上りシートのgid
+    "tokaido_kanayama_holiday_u": "415946901", // 東海道線金山休日上りシートのgid
 
     "chuo_nagoya_weekday_d": "0",          // 中央西線名古屋平日下りシートのgid
     "chuo_nagoya_holiday_d": "393799729",  // 中央西線名古屋休日下りシートのgid
