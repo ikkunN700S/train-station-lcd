@@ -201,7 +201,7 @@ function applyFallback() {
 
 document.addEventListener('DOMContentLoaded', () => {
     // 起動時データを読み込む
-    loadTimetable("chuo_tsurumai_weekday_u"); // 起動時デフォルト
+    loadTimetable("subway_shiogama_weekday_k"); // 起動時デフォルト
     
     // 定期更新（10秒ごと）
     setInterval(updateDisplayFromTimetable, 10000);
