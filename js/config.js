@@ -5,6 +5,9 @@ const CSV_BASE_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSUtXNKeKA
 
 // シートIDのリスト
 const sheetIds = {
+    "tokaido_gamagori_weekday_d": "33484442", // 東海道線蒲郡平日下りシートのgid
+    "tokaido_gamagori_holiday_d": "1978351696", // 東海道線蒲郡休日下りシートのgid
+
     "tokaido_kanayama_weekday_d": "1048215601", // 東海道線金山平日下りシートのgid
     "tokaido_kanayama_holiday_d": "1496874316", // 東海道線金山休日下りシートのgid
     "tokaido_kanayama_weekday_u": "430141393", // 東海道線金山平日上りシートのgid
@@ -30,6 +33,9 @@ const sheetIds = {
 
 // ダイヤのマスターリスト
 const MASTER_SCHEDULES = [
+    { value: "tokaido_gamagori_weekday_d", text: "東海道線 蒲郡駅 [CA47] (平) 大垣方面" },
+    { value: "tokaido_gamagori_holiday_d", text: "東海道線 蒲郡駅 [CA47] (休) 大垣方面" },
+
     { value: "tokaido_kanayama_weekday_d", text: "東海道線 金山駅 [CA66] (平) 大垣方面" },
     { value: "tokaido_kanayama_holiday_d", text: "東海道線 金山駅 [CA66] (休) 大垣方面" },
     { value: "tokaido_kanayama_weekday_u", text: "東海道線 金山駅 [CA66] (平) 豊橋方面" },
