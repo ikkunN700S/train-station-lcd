@@ -26,7 +26,9 @@ const typeData = {
     "semirapid": { text: "区間快速", className: "type-semirapid" },
     "rapid": { text: "快　速", className: "type-rapid" },
     "newrapid": { text: "新快速", className: "type-newrapid" },
-    "specialrapid": { text: "特別快速", className: "type-specialrapid"}
+    "specialrapid": { text: "特別快速", className: "type-specialrapid"},
+    "extra": { text: "臨　時", className: "type-extra" },
+    "outofservice": { text: "回　送", className: "type-outofservice" }
 };
 
 function setupSync(rowNumber) {

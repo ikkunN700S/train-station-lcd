@@ -118,7 +118,9 @@ h1 {
 
 /* 種別ごとの背景色（JR東海準拠の近似色） */
 /* 普通: 灰 */
-.type-local {
+.type-local,
+.type-extra,
+.type-outofservice {
     background-color: #1a1a1a;
     color: #fff;
     border-color: #ffffff; /* 白の枠線を表示 */
