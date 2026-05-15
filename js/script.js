@@ -84,6 +84,16 @@ const CACHE_LIFETIME = 60 * 60 * 1000;
 
 // --- データ取得部分（キャッシュ機能付き） ---
 async function loadTimetable(sheetKey) {
+    // セレクトボックスの要素と、タイトルの要素を取得
+    const selectEl = document.getElementById(`schedule-selector`);
+    const titleEl = document.getElementById(`board-title`);
+    
+    if (selectEl && titleEl) {
+        // 現在選択されている <option> のテキストを取得してタイトルに反映
+        const selectedText = selectEl.options[selectEl.selectedIndex].text;
+        titleEl.textContent = selectedText;
+    }
+
     const gid = sheetIds[sheetKey];
     if (!gid) {
         console.error("指定されたシートが存在しません:", sheetKey);
@@ -175,8 +185,15 @@ function applyFallback() {
 document.addEventListener('DOMContentLoaded', () => {
     initSelectOptions();
 
+    // セレクタの中身を取得
+    const mainSelect = document.getElementById('schedule-selector');
+
+    // 起動時のデフォルトキー
+    const defaultKey = "tokaido_kanayama_weekday_d";
+    mainSelect.value = defaultKey; // セレクタの表示を上書き
+
     // 初期読み込み
-    loadTimetable("tokaido_kanayama_weekday_d"); // 起動時デフォルト
+    loadTimetable(defaultKey); // 起動時デフォルト
     
     // 定期更新（10秒ごと）
     setInterval(updateDisplayFromTimetable, 10000);
