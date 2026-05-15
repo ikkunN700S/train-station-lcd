@@ -5,6 +5,9 @@ const CSV_BASE_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSUtXNKeKA
 
 // シートIDのリスト
 const sheetIds = {
+    "tokaido_toyohashi_weekday_u": "737956611", // 東海道線豊橋平日上りシートのgid
+    "tokaido_toyohashi_holiday_u": "443149319", // 東海道線豊橋休日上りシートのgid
+
     "tokaido_gamagori_weekday_d": "33484442", // 東海道線蒲郡平日下りシートのgid
     "tokaido_gamagori_holiday_d": "1978351696", // 東海道線蒲郡休日下りシートのgid
 
@@ -33,6 +36,9 @@ const sheetIds = {
 
 // ダイヤのマスターリスト
 const MASTER_SCHEDULES = [
+    { value: "tokaido_toyohashi_weekday_u", text: "東海道線 豊橋駅 [CA42] (平) 浜松方面" },
+    { value: "tokaido_toyohashi_holiday_u", text: "東海道線 豊橋駅 [CA42] (休) 浜松方面" },
+
     { value: "tokaido_gamagori_weekday_d", text: "東海道線 蒲郡駅 [CA47] (平) 大垣方面" },
     { value: "tokaido_gamagori_holiday_d", text: "東海道線 蒲郡駅 [CA47] (休) 大垣方面" },
 
