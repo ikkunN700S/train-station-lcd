@@ -16,6 +16,12 @@ h1 {
     margin: 0 auto;
 }
 
+.board-title {
+    font-size: 1.1rem;
+    margin: 0 0 10px 0;
+    color: #444;
+}
+
 /* 発車標ディスプレイのスタイル */
 .display-board {
     background-color: #1a1a1a;
