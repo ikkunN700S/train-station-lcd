@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=900">
+    <link rel="icon" type="image/svg+xml" href="./images/favicon/favicon.svg">
+    <link rel="apple-touch-icon" sizes="180x180" href="./images/favicon/apple-touch-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="256x256" href="./images/favicon/android-chrome-256x256.png">
+    <title>駅ホーム発車標シミュレータ</title>
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>駅ホーム発車標シミュレータ</h1>
+
+        <div class="display-board">
+            <div class="board-header">
+                <span class="col-type">種別</span>
+                <span class="col-time">発車時刻</span>
+                <span class="col-dest">行先</span>
+                <span class="col-cars">両数</span>
+                <span class="col-pos">乗車位置</span>
+            </div>
+            
+            <div class="board-row">
+                <span class="col-type"><div id="disp-type-1" class="type-box"></div></span>
+                <span class="col-time" id="disp-time-1"></span>
+                <span class="col-dest">
+                    <span id="disp-dest-1" class="dest-text"></span>
+                </span>
+                <span class="col-cars" id="disp-cars-1"></span>
+                <span class="col-pos" id="disp-pos-1"></span>
+            </div>
+
+            <div class="board-row">
+                <span class="col-type"><div id="disp-type-2" class="type-box"></div></span>
+                <span class="col-time" id="disp-time-2"></span>
+                <span class="col-dest">
+                    <span id="disp-dest-2" class="dest-text"></span>
+                </span>
+                <span class="col-cars" id="disp-cars-2"></span>
+                <span class="col-pos" id="disp-pos-2"></span>
+            </div>
+        </div>
+
+        <div class="controls">
+            <h3>表示設定</h3>
+            <p><small>※初期データ読込まで数秒かかります。</small></p>
+            
+            <div class="control-row">
+                <h4>ダイヤ選択</h4>
+                <select class="schedule-select" id="schedule-selector">
+                    
+                </select>
+
+                <h4>動作モード</h4>
+                <label>
+                    <input type="checkbox" id="auto-update-toggle" checked>
+                    現在時刻に連動して自動更新する
+                </label>
+            </div>
+
+            <div class="control-row">
+                <h4>1段目</h4>
+                <label>種別: 
+                    <select id="input-type-1">
+                        <option value="local">普通</option>
+                        <option value="semirapid">区間快速</option>
+                        <option value="rapid">快速</option>
+                        <option value="newrapid">新快速</option>
+                        <option value="specialrapid">特別快速</option>
+                    </select>
+                </label>
+                <label>時刻: <input type="text" id="input-time-1" value=""></label>
+                <label>行先: <input type="text" id="input-dest-1" value=""></label>
+                <label>両数: <input type="text" id="input-cars-1" value=""></label>
+                <label>位置: <input type="text" id="input-pos-1" value=""></label>
+            </div>
+
+            <div class="control-row">
+                <h4>2段目</h4>
+                <label>種別: 
+                    <select id="input-type-2">
+                        <option value="local">普通</option>
+                        <option value="semirapid">区間快速</option>
+                        <option value="rapid">快速</option>
+                        <option value="newrapid">新快速</option>
+                        <option value="specialrapid">特別快速</option>
+                    </select>
+                </label>
+                <label>時刻: <input type="text" id="input-time-2" value=""></label>
+                <label>行先: <input type="text" id="input-dest-2" value=""></label>
+                <label>両数: <input type="text" id="input-cars-2" value=""></label>
+                <label>位置: <input type="text" id="input-pos-2" value=""></label>
+            </div>
+        </div>
+
+        <p><small><div class="link"><a href="./index.html" class="home-link">ホームへもどる</a></div></small></p>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 ikkunN700S</p>
+        <p id="site-version"></p>
+        <a href="https://github.com/ikkunN700S/train-station-lcd#%E9%A7%85%E3%83%9B%E3%83%BC%E3%83%A0%E7%99%BA%E8%BB%8A%E6%A8%99%E3%82%B7%E3%83%9F%E3%83%A5%E3%83%AC%E3%83%BC%E3%82%BF" target="_blank" rel="noopener noreferrer" class="footer-link">使用方法はこちら</a>
+        <a href="" id="share-link" class="footer-link">ページを共有する</a>
+    </footer>
+
+    <script src="./js/config.js"></script>
+    <script src="./js/script.js"></script>
+    <script src="./js/version.js"></script>
+    <script src="./js/sharelink.js"></script>
+</body>
+</html>

@@ -1,0 +1,204 @@
+body {
+    font-family: "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif;
+    background-color: #e0e5ec;
+    margin: 0;
+    padding: 20px;
+    color: #333;
+}
+
+.container {
+    width: 900px;
+    margin: 0 auto;
+}
+
+h1 {
+    font-size: 1.5rem;
+    border-bottom: 2px solid #333;
+    padding-bottom: 10px;
+}
+
+/* 発車標エリアのレイアウト */
+.boards-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
+.board-title {
+    font-size: 1.1rem;
+    margin: 0 0 10px 0;
+    color: #444;
+}
+
+/* 発車標ディスプレイ (前回のものを流用・調整) */
+.display-board {
+    background-color: #1a1a1a;
+    color: #ffffff;
+    padding: 15px 20px;
+    border-radius: 8px;
+    border: 4px solid #333;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    letter-spacing: 2px;
+}
+
+.board-header {
+    display: flex;
+    align-items: center;
+    padding: 8px 0;
+    font-size: 0.8rem;
+    color: #cccccc;
+    border-bottom: 1px solid #444;
+    margin-bottom: 10px;
+}
+
+.board-row {
+    display: flex;
+    align-items: center;
+    padding: 8px 0;
+    font-size: 1.8rem;
+    font-weight: bold;
+    height: 60px;
+}
+
+.col-type { width: 22%; text-align: center; }
+.col-time { width: 16%; text-align: center; font-family: monospace; }
+.col-dest {
+    width: 30%;
+    text-align: left;
+    padding: 0 10px;
+    box-sizing: border-box;
+    overflow: hidden;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+}
+.col-cars { width: 12%; text-align: center; }
+.col-pos  { width: 20%; text-align: center; }
+
+.dest-text {
+    display: inline-block;
+    white-space: nowrap;
+    transform-origin: left center;
+}
+
+.type-box {
+    display: inline-block;
+    padding: 2px 10px;
+    width: 85%;
+    text-align: center;
+    box-sizing: border-box;
+    border: 2px solid transparent;
+    border-radius: 4px;
+}
+
+.type-box:empty { display: none; }
+
+.type-local { background-color: #1a1a1a; color: #ffffff; border-color: #ffffff; border-radius: 6px;}
+.type-semirapid { background-color: #00b050; color: #fff; }
+.type-rapid { background-color: #0070c0; color: #fff; }
+.type-newrapid { background-color: #ff9900; color: #fff; }
+.type-specialrapid { background-color: #ffcc00; color: #000; text-shadow: none; }
+
+/* コントロールパネル */
+.controls {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.control-row {
+    margin-bottom: 15px;
+}
+
+select {
+    padding: 8px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 350px;
+}
+
+.save-actions {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.btn-primary {
+    background-color: #0070c0;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-primary:hover {
+    background-color: #005090;
+}
+
+.msg-hidden {
+    opacity: 0;
+    color: #00b050;
+    font-weight: bold;
+    transition: opacity 0.3s;
+}
+
+.msg-visible {
+    opacity: 1;
+}
+
+.link {
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+}
+
+.home-link {
+    color: #777;
+    text-decoration: none;
+    margin: 0;
+}
+
+.home-link:hover {
+    color: #333;
+    text-decoration: underline;
+}
+
+footer {
+    text-align: center;
+    padding: 6px 10px;
+    font-size: 11px;
+    color: #777;
+
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+}
+
+footer p {
+    margin: 0;
+}
+
+footer #site-version {
+    color: #aaa;
+}
+
+footer .footer-link {
+    color: #aaa;
+    text-decoration: none;
+}
+
+footer .footer-link:hover {
+    color: #333;
+    text-decoration: underline;
+}
