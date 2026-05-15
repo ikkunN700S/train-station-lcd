@@ -70,40 +70,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// 時刻表データからリアルタイムに表示する情報を更新する
-// スプレッドシートの公開CSV URL
-const CSV_BASE_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSUtXNKeKAMDN6dXxti5lbUcL8RHC1Hv5cICtJjHdwA7iS4pF44y1hWvWYK1udPhlXrZcySZGIk8dFU/pub?output=csv&single=true&gid=";
-
-// シートID
-const sheetIds = {
-    "tokaido_kanayama_weekday_d": "1048215601", // 東海道線金山平日下りシートのgid
-    "tokaido_kanayama_holiday_d": "1496874316", // 東海道線金山休日下りシートのgid
-    "tokaido_kanayama_weekday_u": "430141393", // 東海道線金山平日上りシートのgid
-    "tokaido_kanayama_holiday_u": "415946901", // 東海道線金山休日上りシートのgid
-
-    "chuo_nagoya_weekday_d": "0",          // 中央西線名古屋平日下りシートのgid
-    "chuo_nagoya_holiday_d": "393799729",  // 中央西線名古屋休日下りシートのgid
-
-    "chuo_kanayama_weekday_d": "1094285652", // 中央西線金山平日下りシートのgid
-    "chuo_kanayama_holiday_d": "946553047", // 中央西線金山休日下りシートのgid
-
-    "chuo_tsurumai_weekday_d": "2108810631", // 中央西線鶴舞平日下りシートのgid
-    "chuo_tsurumai_holiday_d": "1025263841", // 中央西線鶴舞休日下りシートのgid
-    "chuo_tsurumai_weekday_u": "672148058", // 中央西線鶴舞平日上りシートのgid
-    "chuo_tsurumai_holiday_u": "1531316906",  // 中央西線鶴舞休日上りシートのgid
-
-    "subway_tsurumai_weekday_t": "1138879033", // 地下鉄鶴舞平日豊田市方面
-    "subway_tsurumai_holiday_t": "667488261", // 地下鉄鶴舞休日豊田市方面
-
-    "subway_shiogama_weekday_k": "371307575", // 地下鉄塩釜口平日上小田井方面
-    "subway_shiogama_holiday_k": "1015188927"  // 地下鉄塩釜口休日上小田井方面
-};
-
-// ③ 読み込み失敗時に使用する初期値（画像通りの表示設定）
+// ③ 読み込み失敗時に使用する初期値
 const defaultTimetable = [
     { departure: "01:30", type: "local", dest: "塩尻", cars: "8両", pos: "○1～8" },
     { departure: "02:30", type: "specialrapid", dest: "中津川", cars: "8両", pos: "○1～8" }
-    // 必要に応じて3段目以降のダミーデータも追加可能
 ];
 
 // グローバル変数として時刻表を保持
@@ -139,7 +109,10 @@ async function loadTimetable(sheetKey) {
             updateDisplayFromTimetable(true);
             return; // ここで処理を終了し、フェッチは行わない
         } else {
-            console.log(`[${sheetKey}] キャッシュの有効期限が切れました。再取得します。`);
+            // 期限切れデータは破棄する
+            localStorage.removeItem(cacheKey);
+            localStorage.removeItem(timeKey);
+            console.log(`[${sheetKey}] キャッシュの有効期限が切れたため破棄しました。再取得します。`);
         }
     }
 
@@ -200,8 +173,10 @@ function applyFallback() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 起動時データを読み込む
-    loadTimetable("subway_shiogama_weekday_k"); // 起動時デフォルト
+    initSelectOptions();
+
+    // 初期読み込み
+    loadTimetable("tokaido_kanayama_weekday_d"); // 起動時デフォルト
     
     // 定期更新（10秒ごと）
     setInterval(updateDisplayFromTimetable, 10000);
