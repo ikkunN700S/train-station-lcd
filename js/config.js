@@ -1,11 +1,9 @@
-// ==========================================
 // config.js (共通設定・マスターデータ)
-// ==========================================
 
-// 1. スプレッドシートのベースURL
+// スプレッドシートのベースURL
 const CSV_BASE_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSUtXNKeKAMDN6dXxti5lbUcL8RHC1Hv5cICtJjHdwA7iS4pF44y1hWvWYK1udPhlXrZcySZGIk8dFU/pub?output=csv&single=true&gid=";
 
-// 2. シートIDのリスト (一元管理)
+// シートIDのリスト
 const sheetIds = {
     "tokaido_kanayama_weekday_d": "1048215601", // 東海道線金山平日下りシートのgid
     "tokaido_kanayama_holiday_d": "1496874316", // 東海道線金山休日下りシートのgid
@@ -30,7 +28,7 @@ const sheetIds = {
     "subway_shiogama_holiday_k": "1015188927"  // 地下鉄塩釜口休日上小田井方面
 };
 
-// 3. ダイヤのマスターリスト (一元管理)
+// ダイヤのマスターリスト
 const MASTER_SCHEDULES = [
     { value: "tokaido_kanayama_weekday_d", text: "東海道線 金山駅 [CA66] (平) 大垣方面" },
     { value: "tokaido_kanayama_holiday_d", text: "東海道線 金山駅 [CA66] (休) 大垣方面" },
@@ -55,7 +53,7 @@ const MASTER_SCHEDULES = [
     { value: "subway_shiogama_holiday_k", text: "地下鉄 塩釜口駅 [T16] (休) 上小田井方面" }
 ];
 
-// 4. セレクトボックスへの流し込み処理 (共通関数)
+// セレクトボックスへの流し込み処理
 function initSelectOptions() {
     // クラス名 "schedule-select" がついたすべてのセレクトボックスを取得
     const selects = document.querySelectorAll('.schedule-select');
